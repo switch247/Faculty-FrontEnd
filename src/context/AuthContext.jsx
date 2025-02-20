@@ -1,7 +1,8 @@
+// AuthContext.js
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';  // Use useRouter instead of usePathname for navigation
+import { useRouter } from 'next/navigation';
 import api from '../services/api';
 
 // Create a Context for authentication
