@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AccountCircle, School, Group } from '@mui/icons-material';
 import { useAuth } from '../../../context/AuthContext';
 
@@ -16,42 +16,40 @@ const ChooseUser = ({ visitor }) => {
     visible: {
       opacity: 1,
       y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 120,
-        damping: 20,
-        duration: 0.5
-      }
+      transition: { type: "spring", stiffness: 120, damping: 20, duration: 0.5 }
     }
   };
 
-  const handleRoleSelection = async (role) => {
-    const credentials = {
-      Admin: { email: "admin@example.com", password: "zxc" },
-      Student: { rollNum: "S123", studentName: "John Doe", password: "zxc" },
-      Teacher: { email: "teacher@example.com", password: "zxc" }
-    };
-
+  const handleRoleSelection = async (selectedRole) => {
     if (visitor === "guest") {
-      await loginUser(credentials[role], role);
+      // Demo credentials for guest access
+      const credentials = {
+        Admin: { email: "admin@example.com", password: "zxc" },
+        Student: { rollNumber: "S123", studentName: "John Doe", password: "zxc" },
+        Teacher: { email: "teacher@example.com", password: "zxc" }
+      };
+      await loginUser(credentials[selectedRole], selectedRole.toLowerCase());
     } else {
-      router.push(`/${role.toLowerCase()}/login`);
+      router.push(`/auth/login?role=${selectedRole.toLowerCase()}`);
     }
   };
 
   useEffect(() => {
     if (user && currentRole) {
-      router.push(`/${currentRole.toLowerCase()}/dashboard`);
+      router.push(`/${currentRole}/dashboard`);
     }
   }, [user, currentRole, router]);
 
   useEffect(() => {
-    if (error) setShowPopup(true);
+    if (error) {
+      setShowPopup(true);
+      const timer = setTimeout(() => setShowPopup(false), 5000);
+      return () => clearTimeout(timer);
+    }
   }, [error]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-700 to-blue-900 flex flex-col items-center justify-center p-8 space-y-12">
-      {/* Header Section */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -66,7 +64,6 @@ const ChooseUser = ({ visitor }) => {
         </p>
       </motion.div>
 
-      {/* Role Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-7xl px-4">
         {['Admin', 'Student', 'Teacher'].map((role) => (
           <motion.div
@@ -106,7 +103,6 @@ const ChooseUser = ({ visitor }) => {
         ))}
       </div>
 
-      {/* Loading Overlay */}
       {loading && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -120,22 +116,24 @@ const ChooseUser = ({ visitor }) => {
         </motion.div>
       )}
 
-      {/* Error Notification */}
-      {showPopup && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="fixed bottom-8 right-8 bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl flex items-center shadow-lg"
-        >
-          <span className="pr-4">{error}</span>
-          <button
-            onClick={() => setShowPopup(false)}
-            className="text-red-800 hover:text-red-600 transition-colors"
+      <AnimatePresence>
+        {showPopup && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed bottom-8 right-8 bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl flex items-center shadow-lg"
           >
-            ✕
-          </button>
-        </motion.div>
-      )}
+            <span className="pr-4">{error}</span>
+            <button
+              onClick={() => setShowPopup(false)}
+              className="text-red-800 hover:text-red-600 transition-colors"
+            >
+              ✕
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
