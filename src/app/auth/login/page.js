@@ -79,7 +79,7 @@ const LoginPage = () => {
 
       const { data } = await api.post("/auth/login", payload);
       localStorage.setItem("token", data.token);
-      router.push(`/dashboard/${role}`);
+      router.push(`${role}`);
 
     } catch (error) {
       toast.error(error.response?.data?.message || "Login failed");
