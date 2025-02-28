@@ -179,7 +179,7 @@ const Homepage = () => {
                 }}
               >
                 Don't have an account?{" "}
-                <Link href="/signup">
+                <Link href="/auth/signup">
                   <span
                     className={`font-semibold underline ${
                       isDark ? "text-blue-400" : "text-blue-600"

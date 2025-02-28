@@ -73,7 +73,7 @@ const SignupPage = () => {
 
       const { data } = await api.post("/auth/signup", payload);
       localStorage.setItem("token", data.token);
-      router.push(`/${role}`);
+      router.push(`/auth/choose`);
 
     } catch (error) {
       toast.error(error.response?.data?.message || "Signup failed");

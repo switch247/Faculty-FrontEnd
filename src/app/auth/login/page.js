@@ -79,7 +79,7 @@ const LoginPage = () => {
 
       const { data } = await api.post("/auth/login", payload);
       localStorage.setItem("token", data.token);
-      router.push(`${role}`);
+      router.push(`/${role}`);
 
     } catch (error) {
       toast.error(error.response?.data?.message || "Login failed");
@@ -191,7 +191,7 @@ const LoginPage = () => {
               >
                 New Admin? {" "}
                 <a 
-                  href="/Adminregister" 
+                  href="/auth/signup" 
                   className="text-indigo-600 hover:underline font-semibold"
                 >
                   Create Account
