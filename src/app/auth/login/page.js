@@ -43,10 +43,11 @@ const LoginPage = () => {
     const roleType = role.toLowerCase();
 
     if (roleType === "student") {
- 
       if (!fields.name) newErrors.name = "Name required";
       if (!fields.email) newErrors.email = "Email required";
-    } else {}
+    } else if (roleType === "admin") {
+      if (!fields.email) newErrors.email = "Email required";
+    }
     if (!fields.password) newErrors.password = "Password required";
 
     return newErrors;
@@ -68,9 +69,14 @@ const LoginPage = () => {
     }
 
     try {
-      const payload =  {
-   
-     
+      if (role === "admin" && fields.email === "admin@arbaminch.com" && fields.password === "admin1234") {
+        // Bypass API call for admin with default credentials
+        localStorage.setItem("token", "default_admin_token");
+        router.push(`/${role}`);
+        return;
+      }
+
+      const payload = {
         email: fields.email,
         name: fields.name,
         password: fields.password,
@@ -118,12 +124,12 @@ const LoginPage = () => {
                 {role.charAt(0).toUpperCase() + role.slice(1)} Portal
               </h1>
             </motion.div>
-            <p className="text-gray-600 text-lg">Welcome to Smart School System</p>
+            <p className="text-gray-600 text-lg">Welcome to Arbaminch Faculty Management System</p>
           </motion.div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <motion.div variants={itemVariants}>
-             (
+              {role === "student" && (
                 <>
                   <InputField
                     label="Full Name"
@@ -140,7 +146,16 @@ const LoginPage = () => {
                     placeholder={`Enter ${role} email`}
                   />
                 </>
-              )
+              )}
+              {role === "admin" && (
+                <InputField 
+                  label="Email" 
+                  name="email" 
+                  type="email" 
+                  error={errors.email}
+                  placeholder="Enter admin email"
+                />
+              )}
             </motion.div>
 
             <motion.div variants={itemVariants}>

@@ -157,7 +157,7 @@ const SignupPage = () => {
                    "border-indigo-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"}
                   placeholder-gray-400 text-lg`}
               >
-                <option value="admin">Admin</option>
+                {/* <option value="admin">Admin</option> */}
                 <option value="staff">Staff</option>
                 <option value="student">Student</option>
               </select>
