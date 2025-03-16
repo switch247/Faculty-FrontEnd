@@ -26,7 +26,7 @@ const ChooseUser = ({ visitor }) => {
       const credentials = {
         Admin: { email: "admin@example.com", password: "zxc" },
         Student: { rollNumber: "S123", studentName: "John Doe", password: "zxc" },
-        Teacher: { email: "teacher@example.com", password: "zxc" }
+        staff: { email: "staff@example.com", password: "zxc" }
       };
       await loginUser(credentials[selectedRole], selectedRole.toLowerCase());
     } else {
@@ -65,7 +65,7 @@ const ChooseUser = ({ visitor }) => {
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-7xl px-4">
-        {['Admin', 'Student', 'Teacher'].map((role) => (
+        {['Admin', 'Student', 'staff'].map((role) => (
           <motion.div
             key={role}
             variants={cardVariants}
@@ -85,14 +85,14 @@ const ChooseUser = ({ visitor }) => {
                 <div className="inline-flex items-center justify-center rounded-full bg-white/10 p-6 group-hover:bg-white/20 transition-all">
                   {role === 'Admin' && <AccountCircle className="!w-24 !h-24" />}
                   {role === 'Student' && <School className="!w-24 !h-24" />}
-                  {role === 'Teacher' && <Group className="!w-24 !h-24" />}
+                  {role === 'staff' && <Group className="!w-24 !h-24" />}
                 </div>
                 
                 <h2 className="text-4xl font-bold tracking-tight">{role}</h2>
                 <p className="text-lg text-blue-100/90 leading-relaxed">
                   {role === 'Admin' && 'Oversee institution operations and manage system configurations'}
                   {role === 'Student' && 'Access learning materials and track academic progress'}
-                  {role === 'Teacher' && 'Develop curriculum and monitor student performance'}
+                  {role === 'staff' && 'Develop curriculum and monitor student performance'}
                 </p>
               </div>
               <div className="w-full bg-white/20 rounded-full h-2 overflow-hidden">

@@ -1,9 +1,9 @@
 // services/sats.js
 const stats = {
-   users: 2456,
-   communities: 128,
-   messages: 5643,
-   news: 324,
+   users: 2,
+   communities: 8,
+   messages: 3,
+   news: 2,
  };
 
   export default stats;

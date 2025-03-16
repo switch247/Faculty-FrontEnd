@@ -115,7 +115,7 @@ const Homepage = () => {
                   delay: 0.3,
                 }}
               >
-                Faculty Management
+             AribaMinch   Faculty Management
               </motion.span>
               <br />
               System

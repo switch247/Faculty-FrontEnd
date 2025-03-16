@@ -1,4 +1,3 @@
-// AuthContext.js
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
@@ -24,10 +23,10 @@ export const AuthProvider = ({ children }) => {
       }
 
       try {
-        const res = await api.get('/profile');  // Fetch user data
+        const res = await api.get('/users');  // Fetch user data
         setUser(res.data);  // Set user data to state
       } catch (error) {
-        localStorage.removeItem('token');  // Remove invalid token
+      console.log('error',error);  // Remove invalid token
       } finally {
         setLoading(false);  // Stop loading once the check is done
       }

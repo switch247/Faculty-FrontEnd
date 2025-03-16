@@ -42,7 +42,7 @@ const AdminPanel = () => {
   const navigation = [
     { name: 'Users', icon: UsersIcon, href: '/admin/users', current: false },
     { name: 'Communities', icon: UserGroupIcon, href: '/admin/communities', current: false },
-    { name: 'Messages', icon: ChatBubbleLeftRightIcon, href: '/admin/messages', current: false },
+    // { name: 'Messages', icon: ChatBubbleLeftRightIcon, href: '/admin/messages', current: false },
     { name: 'News', icon: NewspaperIcon, href: '/admin/news', current: false },
   ];
 
@@ -199,7 +199,7 @@ const AdminPanel = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-600">Active Users</p>
-                <p className="text-2xl font-bold text-blue-600">2,304</p>
+                <p className="text-2xl font-bold text-blue-600">4</p>
               </div>
             </div>
 
@@ -209,7 +209,7 @@ const AdminPanel = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-600">New Communities</p>
-                <p className="text-2xl font-bold text-blue-600">24</p>
+                <p className="text-2xl font-bold text-blue-600">2</p>
               </div>
             </div>
 
@@ -219,7 +219,7 @@ const AdminPanel = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-600">Unread Messages</p>
-                <p className="text-2xl font-bold text-blue-600">142</p>
+                <p className="text-2xl font-bold text-blue-600">1</p>
               </div>
             </div>
 
@@ -229,7 +229,7 @@ const AdminPanel = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-600">Pending News</p>
-                <p className="text-2xl font-bold text-blue-600">15</p>
+                <p className="text-2xl font-bold text-blue-600">2</p>
               </div>
             </div>
           </div>

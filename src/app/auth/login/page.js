@@ -2,15 +2,17 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 import api from "../../../services/api";
+import { setToken } from "../../../services/auth"; // Import token utility functions
 import "react-toastify/dist/ReactToastify.css";
+import InputField from "../../../components/InputField"; // Import InputField component
 
 const LoginPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const role = searchParams.get("role") || "student";
+  const role = searchParams.get("role") || "student"; // Get the role from the URL
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -18,31 +20,32 @@ const LoginPage = () => {
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
-      transition: { 
+      transition: {
         duration: 0.8,
         staggerChildren: 0.2,
-        when: "beforeChildren"
-      }
-    }
+        when: "beforeChildren",
+      },
+    },
   };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
-      transition: { type: "spring", stiffness: 120 }
-    }
+      transition: { type: "spring", stiffness: 120 },
+    },
   };
 
+  // Validate form fields
   const validateFields = (fields) => {
     const newErrors = {};
     const roleType = role.toLowerCase();
 
-    if (roleType === "student") {
+    if (roleType === "student" || roleType === "staff") {
       if (!fields.name) newErrors.name = "Name required";
       if (!fields.email) newErrors.email = "Email required";
     } else if (roleType === "admin") {
@@ -53,6 +56,7 @@ const LoginPage = () => {
     return newErrors;
   };
 
+  // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrors({});
@@ -61,6 +65,7 @@ const LoginPage = () => {
     const formData = new FormData(event.target);
     const fields = Object.fromEntries(formData.entries());
 
+    // Validate fields
     const validationErrors = validateFields(fields);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -69,25 +74,34 @@ const LoginPage = () => {
     }
 
     try {
-      if (role === "admin" && fields.email === "admin@arbaminch.com" && fields.password === "admin1234") {
-        // Bypass API call for admin with default credentials
-        localStorage.setItem("token", "default_admin_token");
-        router.push(`/${role}`);
-        return;
-      }
-
       const payload = {
         email: fields.email,
         name: fields.name,
         password: fields.password,
-        role
+        role,
       };
 
+      // Make API call to login
       const { data } = await api.post("/auth/login", payload);
-      localStorage.setItem("token", data.token);
-      router.push(`/${role}`);
 
+      // Check if the user's role matches the portal they are trying to access
+      if (data.user.role.toLowerCase() !== role.toLowerCase()) {
+        toast.error(`You are not authorized to access the ${role} portal.`);
+        setLoading(false);
+        return;
+      }
+
+      // Set new token
+      setToken(data.token);
+      console.log("Token set in login:", data.token); // Debugging
+
+      // Save the logged-in user's email to localStorage with a unique key
+      localStorage.setItem("uniqueUserEmail", data.user.email);
+
+      // Redirect to the appropriate role page
+      router.push(`/${role}`);
     } catch (error) {
+      // Handle login error
       toast.error(error.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
@@ -96,27 +110,28 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-blue-400 to-blue-300 flex items-center justify-center p-8">
-      <motion.div 
+      <motion.div
         className="w-full max-w-4xl bg-white rounded-3xl shadow-2xl flex overflow-hidden"
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
         {/* Left Section - Form */}
-        <motion.div 
+        <motion.div
           className="w-full md:w-1/2 p-12 space-y-8"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
-          <motion.div 
-            className="text-center space-y-4"
-            variants={itemVariants}
-          >
+          <motion.div className="text-center space-y-4" variants={itemVariants}>
             <motion.div
-              animate={{ 
+              animate={{
                 scale: [1, 1.05, 1],
-                textShadow: ["0 0 10px rgba(99,102,241,0.3)", "0 0 20px rgba(99,102,241,0.5)", "0 0 10px rgba(99,102,241,0.3)"]
+                textShadow: [
+                  "0 0 10px rgba(99,102,241,0.3)",
+                  "0 0 20px rgba(99,102,241,0.5)",
+                  "0 0 10px rgba(99,102,241,0.3)",
+                ],
               }}
               transition={{ duration: 2, repeat: Infinity }}
             >
@@ -124,12 +139,14 @@ const LoginPage = () => {
                 {role.charAt(0).toUpperCase() + role.slice(1)} Portal
               </h1>
             </motion.div>
-            <p className="text-gray-600 text-lg">Welcome to Arbaminch Faculty Management System</p>
+            <p className="text-gray-600 text-lg">
+              Welcome to Arbaminch Faculty Management System
+            </p>
           </motion.div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <motion.div variants={itemVariants}>
-              {role === "student" && (
+              {(role === "student" || role === "staff") && (
                 <>
                   <InputField
                     label="Full Name"
@@ -138,20 +155,20 @@ const LoginPage = () => {
                     error={errors.name}
                     placeholder={`Enter ${role} name`}
                   />
-                  <InputField 
-                    label="Email" 
-                    name="email" 
-                    type="email" 
+                  <InputField
+                    label="Email"
+                    name="email"
+                    type="email"
                     error={errors.email}
                     placeholder={`Enter ${role} email`}
                   />
                 </>
               )}
               {role === "admin" && (
-                <InputField 
-                  label="Email" 
-                  name="email" 
-                  type="email" 
+                <InputField
+                  label="Email"
+                  name="email"
+                  type="email"
                   error={errors.email}
                   placeholder="Enter admin email"
                 />
@@ -174,8 +191,7 @@ const LoginPage = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-indigo-600 text-white py-4 rounded-xl font-semibold text-lg
-                          hover:bg-indigo-700 transition-all relative overflow-hidden"
+                className="w-full bg-indigo-600 text-white py-4 rounded-xl font-semibold text-lg hover:bg-indigo-700 transition-all relative overflow-hidden"
               >
                 {loading ? (
                   <motion.div
@@ -200,13 +216,13 @@ const LoginPage = () => {
             </motion.div>
 
             {role === "admin" && (
-              <motion.div 
+              <motion.div
                 className="text-center mt-4 text-gray-600"
                 variants={itemVariants}
               >
-                New Admin? {" "}
-                <a 
-                  href="/auth/signup" 
+                New Admin?{" "}
+                <a
+                  href="/auth/signup"
                   className="text-indigo-600 hover:underline font-semibold"
                 >
                   Create Account
@@ -217,22 +233,22 @@ const LoginPage = () => {
         </motion.div>
 
         {/* Right Section - Image */}
-        <motion.div 
+        <motion.div
           className="hidden md:block w-1/2 bg-indigo-100 relative"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
           <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/20 to-blue-400/20" />
-          <img 
-            src="/login-illustration.svg" 
+          <img
+            src="/login-illustration.svg"
             alt="Login Visual"
             className="w-full h-full object-cover p-12 animate-float"
           />
         </motion.div>
       </motion.div>
 
-      <ToastContainer 
+      <ToastContainer
         position="top-right"
         autoClose={5000}
         hideProgressBar={false}
@@ -244,54 +260,6 @@ const LoginPage = () => {
         pauseOnHover
       />
     </div>
-  );
-};
-
-const InputField = ({ label, name, type, error, toggle, setToggle, placeholder }) => {
-  return (
-    <motion.div 
-      className="mb-6"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
-      <label className="block text-gray-700 text-sm font-medium mb-2">
-        {label}
-      </label>
-      <div className="relative">
-        <input
-          type={type}
-          name={name}
-          placeholder={placeholder}
-          className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-all
-            ${error ? "border-red-500 focus:border-red-500" : 
-             "border-indigo-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"}
-            placeholder-gray-400 text-lg`}
-        />
-        {name === "password" && (
-          <button
-            type="button"
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-500 hover:text-indigo-700"
-            onClick={() => setToggle(!toggle)}
-          >
-            <motion.div 
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 0.5 }}
-            >
-              {toggle ? "👁" : "👁"}
-            </motion.div>
-          </button>
-        )}
-      </div>
-      {error && (
-        <motion.p 
-          className="text-red-500 text-sm mt-1"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-        >
-          {error}
-        </motion.p>
-      )}
-    </motion.div>
   );
 };
 

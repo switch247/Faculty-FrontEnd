@@ -24,9 +24,7 @@ export default function ProfileForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.patch('http://localhost:5000/api/profile', formData, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
+   
       alert('Profile updated successfully');
     } catch (err) {
       alert('Update failed');
