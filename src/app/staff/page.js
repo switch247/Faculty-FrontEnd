@@ -145,10 +145,10 @@ export default function FacultyProfile({ userEmail }) {
           <ul className="space-y-2">
             <li>
               <Link
-                href="/staff/messages"
+                href="/staff/discussions"
                 className="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded-md"
               >
-                <span>Messages</span>
+                <span>disscutions</span>
               </Link>
             </li>
             <li>

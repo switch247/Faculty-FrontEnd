@@ -239,9 +239,9 @@ const LoginPage = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/20 to-blue-400/20" />
+          <div className="absolute inset-0 " />
           <img
-            src="/login-illustration.svg"
+            src="/home4.JPG"
             alt="Login Visual"
             className="w-full h-full object-cover p-12 animate-float"
           />

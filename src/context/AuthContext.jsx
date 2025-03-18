@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       try {
-        const res = await api.get('/users');  // Fetch user data
+        const res = await api.get('/auth/users');  // Fetch user data
         setUser(res.data);  // Set user data to state
       } catch (error) {
       console.log('error',error);  // Remove invalid token

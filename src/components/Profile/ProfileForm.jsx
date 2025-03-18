@@ -33,7 +33,7 @@ export default function ProfileForm() {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-md mx-auto">
-      {/* Form fields */}
+     
       <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">
         Update Profile
       </button>

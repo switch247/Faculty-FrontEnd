@@ -16,7 +16,7 @@ const StudentProfilePage = () => {
     graduationYear: "",
   });
 
-  // Load student data from localStorage
+  
   useEffect(() => {
     const recentStudent = JSON.parse(localStorage.getItem("recent_student"));
     if (recentStudent) {
@@ -24,19 +24,18 @@ const StudentProfilePage = () => {
     }
   }, []);
 
-  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setStudent((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Save profile
+ 
   const handleSave = () => {
     localStorage.setItem("recent_student", JSON.stringify(student));
     alert("Profile saved successfully!");
   };
 
-  // Logout
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("recent_student");

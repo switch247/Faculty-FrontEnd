@@ -6,18 +6,27 @@ import NewsCard from "../../../components/News/NewsCard";
 import Navbar from "../../../components/Navbar";
 import { useAuth } from "../../../context/AuthContext";
 import Link from "next/link";
-
+import Spinner from "../../../components/Spinner"; 
 export default function NewsPage() {
   const [news, setNews] = useState([]);
+  const [loading, setLoading] = useState(true); 
   const { user } = useAuth();
 
   useEffect(() => {
     const fetchNews = async () => {
       try {
         const res = await api.get("/news");
-        setNews(res.data);
+
+    
+        const sortedNews = res.data.sort((a, b) => {
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+
+        setNews(sortedNews);
       } catch (err) {
         console.error("Failed to fetch news:", err);
+      } finally {
+        setLoading(false); 
       }
     };
     fetchNews();
@@ -36,11 +45,16 @@ export default function NewsPage() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {news.map((item) => (
-            <NewsCard key={item.id} news={item} />
-          ))}
-        </div>
+      
+        {loading ? (
+          <Spinner /> 
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {news.map((item) => (
+              <NewsCard key={item.id} news={item} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

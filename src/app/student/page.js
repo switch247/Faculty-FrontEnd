@@ -5,7 +5,7 @@ export default function StudentLayout({ children }) {
     <div>
       <StudentHeader />
       <StudentMain/>
-      <main className="pt-16">{children}</main> {/* Add padding to avoid content overlap */}
+      <main className="pt-16">{children}</main>
     </div>
   );
 }

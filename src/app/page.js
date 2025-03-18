@@ -1,11 +1,37 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Homepage = () => {
   const [isDark, setIsDark] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+
+  const images = [
+    "/home1.jpg",
+    "/home2.jpg", 
+    "/home3.jpg", 
+    "/home4.JPG", 
+  ];
+
+
+  const dimensions = [
+    [1800, 1800], 
+    [1800, 1800], 
+    [1800, 1800], 
+    [1800, 1800], 
+  ];
+
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 9000); // 9 seconds
+
+    return () => clearInterval(interval); // Cleanup interval on unmount
+  }, [images.length]);
 
   return (
     <div
@@ -13,7 +39,7 @@ const Homepage = () => {
         isDark ? "bg-black" : "bg-white"
       }`}
     >
-      {/* Theme Toggler */}
+      {/* Dark/Light Mode Toggle */}
       <motion.div
         className="fixed top-4 right-4 flex items-center z-50"
         initial={{ opacity: 0 }}
@@ -31,7 +57,6 @@ const Homepage = () => {
               : "0 0 15px rgba(59, 130, 246, 0.6)",
           }}
         >
-          {/* Slider indicator */}
           <motion.div
             className="absolute w-12 h-12 bg-blue-600 rounded-full z-10"
             layout
@@ -59,7 +84,7 @@ const Homepage = () => {
       {/* Main Content */}
       <div className="container mx-auto px-4 h-screen flex items-center">
         <div className="flex flex-col md:flex-row items-center gap-12 w-full">
-          {/* Left side - Image */}
+          {/* Left Side: Image */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -67,17 +92,27 @@ const Homepage = () => {
             className="md:w-1/2"
           >
             <div className={`${isDark ? "filter invert" : ""}`}>
-              <Image
-                src="/students.svg"
-                alt="Students"
-                width={600}
-                height={400}
-                className="w-full h-auto"
-              />
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentImageIndex}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1 }}
+                >
+                  <Image
+                    src={images[currentImageIndex]}
+                    alt="Students"
+                    width={dimensions[currentImageIndex][0]}
+                    height={dimensions[currentImageIndex][1]}
+                    className="w-full h-auto"
+                  />
+                </motion.div>
+              </AnimatePresence>
             </div>
           </motion.div>
 
-          {/* Right side - Content */}
+          {/* Right Side: Text and Buttons */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -115,7 +150,7 @@ const Homepage = () => {
                   delay: 0.3,
                 }}
               >
-             AribaMinch   Faculty Management
+                AribaMinch Faculty Management
               </motion.span>
               <br />
               System
@@ -140,7 +175,7 @@ const Homepage = () => {
             </motion.p>
 
             <div className="flex flex-col space-y-4">
-              {/* Glowing Get Started Button */}
+              {/* Get Started Button */}
               <motion.div
                 whileHover={{
                   scale: 1.1,
@@ -165,6 +200,7 @@ const Homepage = () => {
                 </Link>
               </motion.div>
 
+              {/* Register Link */}
               <motion.p
                 className={`text-center ${
                   isDark ? "text-gray-400" : "text-gray-600"

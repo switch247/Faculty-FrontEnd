@@ -212,7 +212,7 @@ const SignupPage = () => {
         >
           <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/20 to-blue-400/20" />
           <img 
-            src="/signup-illustration.svg" 
+            src="/home4.JPG" 
             alt="Signup Visual"
             className="w-full h-full object-cover p-12 animate-float"
           />
