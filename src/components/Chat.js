@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { io } from "socket.io-client";
 import { getToken } from "../services/auth";
@@ -12,11 +12,12 @@ const Chat = () => {
   const { discussionId } = useParams();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const [socket, setSocket] = useState(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [socket, setSocket] = useState(null); // Suppress unused variable warning
   const messagesEndRef = useRef(null);
 
   // Fetch initial messages
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     try {
       const response = await api.get(`/discussions/${discussionId}`);
       setMessages(response.data.messages || []);
@@ -26,7 +27,7 @@ const Chat = () => {
         error.response?.data?.message || "Failed to load messages. Please try again."
       );
     }
-  };
+  }, [discussionId]);
 
   // Set up Socket.IO connection
   useEffect(() => {
@@ -44,7 +45,7 @@ const Chat = () => {
     });
 
     socket.on("error", (error) => {
-      console.error("Socket error:", error);
+      console.error("Socket error:", error, socket);
       toast.error("Connection error. Please refresh the page.");
     });
 
@@ -58,7 +59,7 @@ const Chat = () => {
   // Fetch messages on component mount
   useEffect(() => {
     fetchMessages();
-  }, [discussionId]);
+  }, [discussionId, fetchMessages]); // Add fetchMessages to dependency array
 
   // Scroll to the bottom of the chat when new messages arrive
   useEffect(() => {
@@ -130,11 +131,11 @@ const Chat = () => {
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
               placeholder="Type your message..."
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-4 py-2 border border-gray-300  text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
               onClick={handleSendMessage}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="bg-blue-600 text-black px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
               Send
             </button>

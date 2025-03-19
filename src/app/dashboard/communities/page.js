@@ -26,7 +26,7 @@ export default function CommunitiesPage() {
       await api.patch(`/communities/${communityId}/join`);
       window.location.reload(); // Refresh to update community status
     } catch (err) {
-      alert('Failed to join community');
+      alert('Failed to join community',err);
     }
   };
 

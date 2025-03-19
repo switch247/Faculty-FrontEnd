@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import api from '../../../services/api';
-import { useAuth } from '../../../context/AuthContext';
+// import { useAuth } from '../../../context/AuthContext';
 import Navbar from '../../../components/Navbar';
 import ChatWindow from '../../../components/Chat/ChatWindow';
 
 export default function ChatPage() {
-  const { user } = useAuth();
+  
   const [discussions, setDiscussions] = useState([]);
   const [selectedDiscussion, setSelectedDiscussion] = useState(null);
 

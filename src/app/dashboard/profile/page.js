@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import api from '../../../services/api';
-import { useAuth } from '../../../context/AuthContext';
+// import { useAuth } from '../../../context/AuthContext';
 import Navbar from '../../../components/Navbar';
 import ProfileForm from '../../../components/Profile/ProfileForm';
 
 export default function ProfilePage() {
-  const { user } = useAuth();
+  // const { user } = useAuth();
   const [communities, setCommunities] = useState([]);
 
   useEffect(() => {

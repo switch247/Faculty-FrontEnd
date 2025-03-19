@@ -93,7 +93,7 @@ export default function FacultyProfile({ userEmail }) {
       };
       localStorage.setItem(`facultyProfile_${userEmail}`, JSON.stringify(profileData));
       setEditMode(false); // Exit edit mode after saving
-
+console.log(isAuthorized);
       // Show a toast message on successful save
       toast.success('Profile saved successfully!');
     }
@@ -289,7 +289,7 @@ export default function FacultyProfile({ userEmail }) {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Mother's Name</label>
+                  <label className="block text-sm font-medium text-gray-700">Mothers Name</label>
                   {editMode ? (
                     <input
                       type="text"

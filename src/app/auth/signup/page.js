@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion} from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 import api from "../../../services/api";
 import "react-toastify/dist/ReactToastify.css";

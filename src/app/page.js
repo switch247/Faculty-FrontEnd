@@ -214,7 +214,7 @@ const Homepage = () => {
                   delay: 0.7,
                 }}
               >
-                Don't have an account?{" "}
+                Dont have an account?{" "}
                 <Link href="/auth/signup">
                   <span
                     className={`font-semibold underline ${
