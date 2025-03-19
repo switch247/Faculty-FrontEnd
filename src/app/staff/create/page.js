@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
-import api from "../../../../services/api";
-import { getToken, removeToken } from "../../../../services/auth";
+import api from "../../../services/api";
+import { getToken, removeToken } from "../../../services/auth";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function CreateDiscussionPage() {

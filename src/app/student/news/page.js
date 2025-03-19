@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import api from "../../../services/api";
 import NewsCard from "../../../components/News/NewsCard";
-import Navbar from "../../../components/Navbar";
+import Navbar from "../../../components/header/StudentHeader";
 import { useAuth } from "../../../context/AuthContext";
 import Link from "next/link";
 import Spinner from "../../../components/Spinner"; 

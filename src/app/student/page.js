@@ -1,4 +1,4 @@
-import StudentHeader from "../../components/StudentHeader";
+import StudentHeader from "../../components/header/StudentHeader";
 import StudentMain from "../../components/StudentMainPage";
 export default function StudentLayout({ children }) {
   return (

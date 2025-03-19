@@ -4,14 +4,14 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {useAuth} from '../../context/AuthContext';
 
 export default function FacultyProfile({ userEmail }) {
-  const [filter, setFilter] = useState('basic'); // Filter state
-  const [editMode, setEditMode] = useState(false); // Edit mode state
-  const [sidebarOpen, setSidebarOpen] = useState(true); // Sidebar state
-  const [isAuthorized, setIsAuthorized] = useState(false); // Authorization state
-
-  // Profile fields
+  const {user , updateProfile}=useAuth();
+  const [filter, setFilter] = useState('basic'); 
+  const [editMode, setEditMode] = useState(false); 
+  const [sidebarOpen, setSidebarOpen] = useState(true); 
+  const [isAuthorized, setIsAuthorized] = useState(false); 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [motherName, setMotherName] = useState('');
@@ -26,19 +26,15 @@ export default function FacultyProfile({ userEmail }) {
   const [achievement, setAchievement] = useState('');
   const [image, setImage] = useState(null);
 
-  // Load saved profile from localStorage on component mount
-  useEffect(() => {
-    if (userEmail) {
-      // Retrieve the unique email from localStorage
-      const uniqueUserEmail = localStorage.getItem("uniqueUserEmail");
+  
+useEffect(()=>{
+  if(userEmail){
+      if(userEmail === user?.email) {
+        setIsAuthorized(true);
 
-      // Check if the logged-in user's email matches the unique email
-      if (userEmail === uniqueUserEmail) {
-        setIsAuthorized(true); // Authorize the user
+        const savedProfile=JSON.parse(localStorage.getItem(`facultyProfile_${userEmail}`));
 
-        // Load the profile data for the logged-in user
-        const savedProfile = JSON.parse(localStorage.getItem(`facultyProfile_${userEmail}`));
-        if (savedProfile) {
+        if(savedProfile){
           setFirstName(savedProfile.firstName || '');
           setLastName(savedProfile.lastName || '');
           setMotherName(savedProfile.motherName || '');
@@ -53,53 +49,57 @@ export default function FacultyProfile({ userEmail }) {
           setAchievement(savedProfile.achievement || '');
           setImage(savedProfile.image || null);
         }
-      } else {
-        setIsAuthorized(false); // Unauthorized access
-        // Initialize fields with empty values
-        setFirstName('');
-        setLastName('');
-        setMotherName('');
-        setGender('');
-        setDateOfBirth('');
-        setReligion('');
-        setEmail('');
-        setPhone('');
-        setPosition('');
-        setExperience('');
-        setQualification('');
-        setAchievement('');
-        setImage(null);
-      }
-    }
-  }, [userEmail]);
 
-  // Handle saving profile to localStorage
-  const handleSave = () => {
-    if (userEmail) {
-      const profileData = {
-        firstName,
-        lastName,
-        motherName,
-        gender,
-        dateOfBirth,
-        religion,
-        email,
-        phone,
-        position,
-        experience,
-        qualification,
-        achievement,
-        image,
-      };
-      localStorage.setItem(`facultyProfile_${userEmail}`, JSON.stringify(profileData));
-      setEditMode(false); // Exit edit mode after saving
-console.log(isAuthorized);
-      // Show a toast message on successful save
-      toast.success('Profile saved successfully!');
-    }
-  };
 
-  // Handle image upload
+
+  } else {
+    setIsAuthorized(false);
+    // Reset form fields if the user is not authorized
+    setFirstName('');
+    setLastName('');
+    setMotherName('');
+    setGender('');
+    setDateOfBirth('');
+    setReligion('');
+    setEmail('');
+    setPhone('');
+    setPosition('');
+    setExperience('');
+    setQualification('');
+    setAchievement('');
+    setImage(null);
+  }
+}
+},[userEmail,user]);
+
+ 
+const handleSave = (e) => {
+  e.preventDefault();
+  if (userEmail === user?.email) {
+    const profileData = {
+      firstName,
+      lastName,
+      motherName,
+      gender,
+      dateOfBirth,
+      religion,
+      email,
+      phone,
+      position,
+      experience,
+      qualification,
+      achievement,
+      image,
+    };
+
+   
+    updateProfile({ ...user, ...profileData });
+    setEditMode(false);
+    toast.success('Profile saved successfully!');
+  }
+};
+
+ 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -165,7 +165,7 @@ console.log(isAuthorized);
 
       {/* Main Content */}
       <div className="flex-1 p-8">
-        {/* Toggle Sidebar Button */}
+      
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="fixed top-4 left-4 p-2 bg-white rounded-lg shadow-md z-3"
@@ -186,9 +186,9 @@ console.log(isAuthorized);
           </svg>
         </button>
 
-        {/* Profile Content */}
+       
         <div className="bg-white p-8 rounded-lg shadow-md">
-          {/* Header Section */}
+       
           <div className="flex items-center space-x-6 mb-8">
             <div className="w-32 h-32 rounded-lg overflow-hidden border-4 border-gray-200">
               {image ? (
@@ -205,10 +205,11 @@ console.log(isAuthorized);
             </div>
           </div>
 
-          {/* Image Upload Button */}
+       
           <div className="mb-8">
             <input
               type="file"
+              
               accept="image/*"
               onChange={handleImageUpload}
               className="hidden"
@@ -222,7 +223,7 @@ console.log(isAuthorized);
             </label>
           </div>
 
-          {/* Filter Buttons */}
+      
           <div className="flex space-x-4 mb-8">
             <button
               onClick={() => setFilter('basic')}
@@ -258,7 +259,7 @@ console.log(isAuthorized);
             </button>
           </div>
 
-          {/* Basic Info Section */}
+        
           {filter === 'basic' && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

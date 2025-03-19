@@ -22,7 +22,7 @@ const ChooseUser = ({ visitor }) => {
 
   const handleRoleSelection = async (selectedRole) => {
     if (visitor === "guest") {
-      // Demo credentials for guest access
+    
       const credentials = {
         Admin: { email: "admin@example.com", password: "zxc" },
         Student: { rollNumber: "S123", studentName: "John Doe", password: "zxc" },

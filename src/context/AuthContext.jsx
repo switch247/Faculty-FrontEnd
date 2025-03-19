@@ -1,17 +1,16 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import api from "../services/api";
-
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); 
-  const [loading, setLoading] = useState(true); // State to track loading status
-  const router = useRouter(); 
-
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const searchParams = useSearchParams(); // Move useSearchParams here
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -22,10 +21,8 @@ export const AuthProvider = ({ children }) => {
       }
 
       try {
-        const user = localStorage.getItem("user"); // Get token from localStorage
+        const user = localStorage.getItem("user"); // Get user from localStorage
         setUser(JSON.parse(user));
-        // const res = await api.get('/auth/users');  // Fetch user data
-        // setUser(res.data);  // Set user data to state
       } catch (error) {
         console.log("error", error); // Remove invalid token
       } finally {
@@ -36,21 +33,29 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
-
   const login = async (payload) => {
     try {
-      console.log(payload)
+      const role = searchParams.get("role") || "admin"; // Use searchParams here
       const res = await api.post("/auth/login", { ...payload });
+console.log("respnse",res);
+      // Save token and user to localStorage
       localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.parse(res.data.user)); 
+      localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      setUser(res.data.user); 
-      router.push("/dashboard"); 
+      // Check if there's a saved profile for the user
+      const savedProfile = JSON.parse(localStorage.getItem(`facultyProfile_${res.data.user.email}`));
+      if (savedProfile) {
+        setUser({ ...res.data.user, ...savedProfile });
+      } else {
+        setUser(res.data.user);
+      }
+
+      // Redirect to the role-based page
+      router.push(`/${role}`);
     } catch (error) {
       throw new Error("Invalid credentials");
     }
   };
-
 
   const signup = async (userData) => {
     try {
@@ -68,28 +73,12 @@ export const AuthProvider = ({ children }) => {
     setUser(null); // Clear user state
     router.push("/auth/login"); // Redirect to login page
   };
-  const updateProfile = (updated_user) => {
-    // const updated_user = {
-    //   firstName,
-    //   lastName,
-    //   motherName,
-    //   gender,
-    //   dateOfBirth,
-    //   religion,
-    //   email,
-    //   phone,
-    //   position,
-    //   experience,
-    //   qualification,
-    //   achievement,
-    //   image,
-    // };
 
-    localStorage.setItem("user", updated_user); // Save token to localStorage
-    setUser(updated_user); // Set the user info
+  const updateProfile = (updated_user) => {
+    localStorage.setItem("user", JSON.stringify(updated_user)); // Save updated user to localStorage
+    setUser(updated_user); // Update user state
   };
 
-  // Provide context values to children components
   return (
     <AuthContext.Provider
       value={{
@@ -105,7 +94,6 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
