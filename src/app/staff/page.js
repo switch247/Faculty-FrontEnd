@@ -145,10 +145,10 @@ console.log(isAuthorized);
           <ul className="space-y-2">
             <li>
               <Link
-                href="/staff/discussions"
+                href="/staff/create"
                 className="flex items-center p-2 text-gray-700 hover:bg-gray-100 rounded-md"
               >
-                <span>disscutions</span>
+                <span>create disscutions</span>
               </Link>
             </li>
             <li>

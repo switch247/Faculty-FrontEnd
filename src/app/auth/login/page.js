@@ -2,20 +2,20 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 import api from "../../../services/api";
-import { setToken } from "../../../services/auth"; // Import token utility functions
 import "react-toastify/dist/ReactToastify.css";
-import InputField from "../../../components/InputField"; // Import InputField component
+import { useAuth } from "../../../context/AuthContext";
 
 const LoginPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const role = searchParams.get("role") || "student"; // Get the role from the URL
+  const role = searchParams.get("role") || "student";
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const { login } = useAuth();
 
   // Animation variants
   const containerVariants = {
@@ -40,23 +40,20 @@ const LoginPage = () => {
     },
   };
 
-  // Validate form fields
   const validateFields = (fields) => {
     const newErrors = {};
     const roleType = role.toLowerCase();
 
-    if (roleType === "student" || roleType === "staff") {
+    if (roleType === "student") {
       if (!fields.name) newErrors.name = "Name required";
       if (!fields.email) newErrors.email = "Email required";
-    } else if (roleType === "admin") {
-      if (!fields.email) newErrors.email = "Email required";
+    } else {
     }
     if (!fields.password) newErrors.password = "Password required";
 
     return newErrors;
   };
 
-  // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrors({});
@@ -65,7 +62,6 @@ const LoginPage = () => {
     const formData = new FormData(event.target);
     const fields = Object.fromEntries(formData.entries());
 
-    // Validate fields
     const validationErrors = validateFields(fields);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -81,27 +77,10 @@ const LoginPage = () => {
         role,
       };
 
-      // Make API call to login
-      const { data } = await api.post("/auth/login", payload);
-
-      // Check if the user's role matches the portal they are trying to access
-      if (data.user.role.toLowerCase() !== role.toLowerCase()) {
-        toast.error(`You are not authorized to access the ${role} portal.`);
-        setLoading(false);
-        return;
-      }
-
-      // Set new token
-      setToken(data.token);
-      console.log("Token set in login:", data.token); // Debugging
-
-      // Save the logged-in user's email to localStorage with a unique key
-      localStorage.setItem("uniqueUserEmail", data.user.email);
-
-      // Redirect to the appropriate role page
+    
+      login(payload);
       router.push(`/${role}`);
     } catch (error) {
-      // Handle login error
       toast.error(error.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
@@ -140,39 +119,30 @@ const LoginPage = () => {
               </h1>
             </motion.div>
             <p className="text-gray-600 text-lg">
-              Welcome to Arbaminch Faculty Management System
+              Welcome to Smart School System
             </p>
           </motion.div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <motion.div variants={itemVariants}>
-              {(role === "student" || role === "staff") && (
-                <>
-                  <InputField
-                    label="Full Name"
-                    name="name"
-                    type="text"
-                    error={errors.name}
-                    placeholder={`Enter ${role} name`}
-                  />
-                  <InputField
-                    label="Email"
-                    name="email"
-                    type="email"
-                    error={errors.email}
-                    placeholder={`Enter ${role} email`}
-                  />
-                </>
-              )}
-              {role === "admin" && (
+              (
+              <>
+                <InputField
+                  label="Full Name"
+                  name="name"
+                  type="text"
+                  error={errors.name}
+                  placeholder={`Enter ${role} name`}
+                />
                 <InputField
                   label="Email"
                   name="email"
                   type="email"
                   error={errors.email}
-                  placeholder="Enter admin email"
+                  placeholder={`Enter ${role} email`}
                 />
-              )}
+              </>
+              )
             </motion.div>
 
             <motion.div variants={itemVariants}>
@@ -191,7 +161,8 @@ const LoginPage = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-indigo-600 text-white py-4 rounded-xl font-semibold text-lg hover:bg-indigo-700 transition-all relative overflow-hidden"
+                className="w-full bg-indigo-600 text-white py-4 rounded-xl font-semibold text-lg
+                          hover:bg-indigo-700 transition-all relative overflow-hidden"
               >
                 {loading ? (
                   <motion.div
@@ -239,9 +210,9 @@ const LoginPage = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <div className="absolute inset-0 " />
+          <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/20 to-blue-400/20" />
           <img
-            src="/home4.JPG"
+            src="/login-illustration.svg"
             alt="Login Visual"
             className="w-full h-full object-cover p-12 animate-float"
           />
@@ -260,6 +231,65 @@ const LoginPage = () => {
         pauseOnHover
       />
     </div>
+  );
+};
+
+const InputField = ({
+  label,
+  name,
+  type,
+  error,
+  toggle,
+  setToggle,
+  placeholder,
+}) => {
+  return (
+    <motion.div
+      className="mb-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      <label className="block text-gray-700 text-sm font-medium mb-2">
+        {label}
+      </label>
+      <div className="relative">
+        <input
+          type={type}
+          name={name}
+          placeholder={placeholder}
+          className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-all
+            ${
+              error
+                ? "border-red-500 focus:border-red-500"
+                : "border-indigo-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+            }
+            placeholder-gray-400 text-lg`}
+        />
+        {name === "password" && (
+          <button
+            type="button"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-500 hover:text-indigo-700"
+            onClick={() => setToggle(!toggle)}
+          >
+            <motion.div
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 0.5 }}
+            >
+              {toggle ? "👁" : "👁"}
+            </motion.div>
+          </button>
+        )}
+      </div>
+      {error && (
+        <motion.p
+          className="text-red-500 text-sm mt-1"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          {error}
+        </motion.p>
+      )}
+    </motion.div>
   );
 };
 

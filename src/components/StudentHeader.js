@@ -27,14 +27,14 @@ const StudentHeader = () => {
 
         {/* Navigation Links */}
         <nav className="flex items-center space-x-6">
-          <Link href="/student/message">
+          <Link href="/student/discussions/create">
             <motion.div
               className="flex items-center space-x-2 hover:text-blue-200 transition-colors"
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
               <span className="text-lg">💬</span> {/* Message icon */}
-              <span className="hidden md:inline">Messages</span>
+              <span className="hidden md:inline">Disscutions</span>
             </motion.div>
           </Link>
 

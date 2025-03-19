@@ -83,7 +83,7 @@ export default function CreateDiscussionPage() {
       if (res.status === 201) {
         toast.success("Discussion created successfully!");
        
-        router.push(`/student/discussions/${res.data.id}/chat`);
+        router.push(`/staff/discussions/${res.data.id}/chat`);
       }
     } catch (err) {
       console.error("Failed to create discussion:", err);
