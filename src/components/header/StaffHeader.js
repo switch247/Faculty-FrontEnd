@@ -4,7 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
-const StudentHeader = () => {
+const staffHeader = () => {
   return (
     <header className="bg-blue-600 text-white shadow-lg fixed w-full top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
@@ -14,20 +14,33 @@ const StudentHeader = () => {
           whileHover={{ scale: 1.1 }}
           transition={{ type: "spring", stiffness: 300 }}
         >
-          <Link href="/student">
-            <Image
+          <Link href="/staff">
+            {/* <Image
               src="/logo.png" // Replace with your logo path
               alt="Logo"
               width={120}
               height={40}
               className="cursor-pointer"
-            />
+            /> */}
           </Link>
         </motion.div>
 
         {/* Navigation Links */}
         <nav className="flex items-center space-x-6">
-          <Link href="/student/discussions/create">
+          <Link href="/staff/communities">
+            <motion.div
+              className="flex items-center space-x-2 hover:text-blue-200 transition-colors"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <>
+                <span className="text-lg"> 👤 </span>
+                {/* Message icon */}
+                <span className="hidden md:inline">communities</span>
+              </>
+            </motion.div>
+          </Link>
+          <Link href="/staff/discussions/create">
             <motion.div
               className="flex items-center space-x-2 hover:text-blue-200 transition-colors"
               whileHover={{ scale: 1.05 }}
@@ -38,7 +51,7 @@ const StudentHeader = () => {
             </motion.div>
           </Link>
 
-          <Link href="/student/profile">
+          <Link href="/staff/profile">
             <motion.div
               className="flex items-center space-x-2 hover:text-blue-200 transition-colors"
               whileHover={{ scale: 1.05 }}
@@ -49,7 +62,7 @@ const StudentHeader = () => {
             </motion.div>
           </Link>
 
-          <Link href="/student/news">
+          <Link href="/staff/news">
             <motion.div
               className="flex items-center space-x-2 hover:text-blue-200 transition-colors"
               whileHover={{ scale: 1.05 }}
@@ -67,14 +80,14 @@ const StudentHeader = () => {
           whileHover={{ scale: 1.1 }}
           transition={{ type: "spring", stiffness: 300 }}
         >
-          <Link href="/student">
-            <Image
+          <Link href="/staff">
+            {/* <Image
               src="/logo.png" // Replace with your logo path
               alt="Logo"
               width={80}
               height={30}
               className="cursor-pointer"
-            />
+            /> */}
           </Link>
         </motion.div>
       </div>
@@ -82,4 +95,4 @@ const StudentHeader = () => {
   );
 };
 
-export default StudentHeader;
+export default staffHeader;

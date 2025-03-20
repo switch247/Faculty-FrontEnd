@@ -1,6 +1,6 @@
 import React from "react";
 
-const CommunityCard = ({ community, onJoin }) => {
+const CommunityCard = ({ community, onJoin, OnExplore }) => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md mb-6">
       <h2 className="text-xl font-semibold text-gray-800">{community.name}</h2>
@@ -13,6 +13,14 @@ const CommunityCard = ({ community, onJoin }) => {
           Join Community
         </button>
       </div>
+      {OnExplore && (
+        <button
+          onClick={OnExplore}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+        >
+          Explore Community
+        </button>
+      )}
     </div>
   );
 };

@@ -12,7 +12,9 @@ const Home = () => {
   useEffect(() => {
     const fetchCommunities = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/communities`);
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/communities`
+        );
         const data = await res.json();
         setCommunities(data);
       } catch (error) {
@@ -24,12 +26,14 @@ const Home = () => {
     fetchCommunities();
   }, []);
 
- 
+  const handleExploreCommunity = (communityId) => {
+    window.location.href = `communities/${communityId}`;
+  };
   const handleJoinCommunity = async (communityId) => {
     try {
       setLoading(true);
       const token = getToken();
-      const user = JSON.parse(atob(token.split(".")[1])); 
+      const user = JSON.parse(atob(token.split(".")[1]));
 
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/communities/${communityId}/join`,
@@ -45,7 +49,7 @@ const Home = () => {
 
       if (res.ok) {
         toast.success("Successfully joined the community!");
-    
+
         const updatedCommunities = await fetch(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/communities`
         ).then((res) => res.json());
@@ -67,14 +71,17 @@ const Home = () => {
       setLoading(true);
       const token = getToken();
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/communities`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ name, description }),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/communities`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ name, description }),
+        }
+      );
 
       if (res.ok) {
         toast.success("Community created successfully!");
@@ -143,6 +150,7 @@ const Home = () => {
               key={community.id}
               community={community}
               onJoin={() => handleJoinCommunity(community.id)}
+              OnExplore={() => handleExploreCommunity(community.id)}
             />
           ))}
         </div>

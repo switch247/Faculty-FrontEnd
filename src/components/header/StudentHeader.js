@@ -15,13 +15,13 @@ const StudentHeader = () => {
           transition={{ type: "spring", stiffness: 300 }}
         >
           <Link href="/student">
-            <img
+            {/* <img
               src="/logo.png" // Replace with your logo path
               alt="Logo"
               width={120}
               height={40}
               className="cursor-pointer"
-            />
+            /> */}
           </Link>
         </motion.div>
 
@@ -68,13 +68,13 @@ const StudentHeader = () => {
           transition={{ type: "spring", stiffness: 300 }}
         >
           <Link href="/student">
-            <Image
+            {/* <Image
               src="/logo.png" // Replace with your logo path
               alt="Logo"
               width={80}
               height={30}
               className="cursor-pointer"
-            />
+            /> */}
           </Link>
         </motion.div>
       </div>

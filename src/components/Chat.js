@@ -12,11 +12,10 @@ const Chat = () => {
   const { discussionId } = useParams();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
- 
-  const [socket, setSocket] = useState(null); 
+
+  const [socket, setSocket] = useState(null);
   const messagesEndRef = useRef(null);
 
- 
   const fetchMessages = useCallback(async () => {
     try {
       const response = await api.get(`/discussions/${discussionId}`);
@@ -24,12 +23,12 @@ const Chat = () => {
     } catch (error) {
       console.error("Failed to fetch messages:", error);
       toast.error(
-        error.response?.data?.message || "Failed to load messages. Please try again."
+        error.response?.data?.message ||
+          "Failed to load messages. Please try again."
       );
     }
   }, [discussionId]);
 
-  
   useEffect(() => {
     const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL, {
       auth: { token: getToken() },
@@ -41,6 +40,7 @@ const Chat = () => {
     });
 
     socket.on("newMessage", (message) => {
+      console.log("Received new message:", message);
       setMessages((prevMessages) => [...prevMessages, message]);
     });
 
@@ -56,15 +56,13 @@ const Chat = () => {
     };
   }, [discussionId]);
 
-
   useEffect(() => {
     fetchMessages();
-  }, [discussionId, fetchMessages]); 
+  }, [discussionId, fetchMessages]);
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  
   const handleSendMessage = async () => {
     if (!newMessage.trim()) {
       toast.error("Message cannot be empty.");
@@ -80,13 +78,10 @@ const Chat = () => {
         throw new Error("Invalid token: Unable to extract authorId");
       }
 
-      const response = await api.post(
-        `/discussions/${discussionId}/messages`,
-        {
-          content: newMessage,
-          authorId,
-        }
-      );
+      const response = await api.post(`/discussions/${discussionId}/messages`, {
+        content: newMessage,
+        authorId,
+      });
 
       if (response.data) {
         setNewMessage("");
@@ -94,7 +89,8 @@ const Chat = () => {
     } catch (error) {
       console.error("Failed to send message:", error);
       toast.error(
-        error.response?.data?.message || "Failed to send message. Please try again."
+        error.response?.data?.message ||
+          "Failed to send message. Please try again."
       );
     }
   };
@@ -103,7 +99,9 @@ const Chat = () => {
     <div className="min-h-screen bg-blue-50 p-6">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h1 className="text-2xl font-bold text-blue-800 mb-6">Discussion Chat</h1>
+          <h1 className="text-2xl font-bold text-blue-800 mb-6">
+            Discussion Chat
+          </h1>
           <div className="h-[500px] overflow-y-auto mb-6 border border-gray-200 rounded-lg p-4 bg-gray-50">
             {messages.map((message) => (
               <div key={message.id} className="mb-4">
