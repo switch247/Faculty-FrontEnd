@@ -12,11 +12,11 @@ const Chat = () => {
   const { discussionId } = useParams();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [socket, setSocket] = useState(null); // Suppress unused variable warning
+ 
+  const [socket, setSocket] = useState(null); 
   const messagesEndRef = useRef(null);
 
-  // Fetch initial messages
+ 
   const fetchMessages = useCallback(async () => {
     try {
       const response = await api.get(`/discussions/${discussionId}`);
@@ -29,7 +29,7 @@ const Chat = () => {
     }
   }, [discussionId]);
 
-  // Set up Socket.IO connection
+  
   useEffect(() => {
     const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL, {
       auth: { token: getToken() },
@@ -56,17 +56,15 @@ const Chat = () => {
     };
   }, [discussionId]);
 
-  // Fetch messages on component mount
+
   useEffect(() => {
     fetchMessages();
-  }, [discussionId, fetchMessages]); // Add fetchMessages to dependency array
-
-  // Scroll to the bottom of the chat when new messages arrive
+  }, [discussionId, fetchMessages]); 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Send a new message
+  
   const handleSendMessage = async () => {
     if (!newMessage.trim()) {
       toast.error("Message cannot be empty.");
@@ -75,7 +73,8 @@ const Chat = () => {
 
     try {
       const token = getToken();
-      const authorId = JSON.parse(atob(token.split(".")[1]))?.id;
+      const user = JSON.parse(atob(token.split(".")[1]));
+      const authorId = user.id;
 
       if (!authorId) {
         throw new Error("Invalid token: Unable to extract authorId");
@@ -109,11 +108,19 @@ const Chat = () => {
             {messages.map((message) => (
               <div key={message.id} className="mb-4">
                 <div className="flex items-start space-x-3">
-                  <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
+                  {/* Display different colors for staff and student avatars */}
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${
+                      message.role === "staff" ? "bg-green-500" : "bg-blue-500"
+                    }`}
+                  >
                     {message.author.name.charAt(0)}
                   </div>
                   <div>
-                    <p className="font-semibold text-blue-700">{message.author.name}</p>
+                    {/* Display the author's name and role */}
+                    <p className="font-semibold text-blue-700">
+                      {message.author.name} ({message.role})
+                    </p>
                     <p className="text-gray-700">{message.content}</p>
                     <p className="text-xs text-gray-500">
                       {new Date(message.createdAt).toLocaleString()}
@@ -131,11 +138,11 @@ const Chat = () => {
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
               placeholder="Type your message..."
-              className="flex-1 px-4 py-2 border border-gray-300  text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-4 py-2 border border-gray-300 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
               onClick={handleSendMessage}
-              className="bg-blue-600 text-black px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
               Send
             </button>
